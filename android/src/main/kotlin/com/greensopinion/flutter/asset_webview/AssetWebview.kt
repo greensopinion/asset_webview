@@ -35,7 +35,7 @@ private class AssetWebview(
         view.settings.javaScriptEnabled = true
         view.settings.allowFileAccess = false
         view.settings.allowContentAccess = false
-        view.setWebViewClient(FlutterWebviewClient(context))
+        view.setWebViewClient(AssetWebviewClient(context))
         val initialUrl = creationParams["initialUrl"] as String ?: throw Exception("Must specify initialUrl")
         require(initialUrl.startsWith("asset://local/")) { "Expected initialUrl starting with asset://local/" }
         val path = URI.create(initialUrl).path.trimLeadingSlash()
@@ -52,7 +52,7 @@ private class AssetWebview(
     }
 }
 
-private class FlutterWebviewClient(val context: Context) : WebViewClient() {
+private class AssetWebviewClient(val context: Context) : WebViewClient() {
     override fun shouldInterceptRequest(view: android.webkit.WebView, request: WebResourceRequest): WebResourceResponse? {
         if (request.url.scheme == "asset" && request.url.host == "local") {
             val path = request.url.path
