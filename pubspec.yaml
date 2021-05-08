@@ -2,7 +2,6 @@ name: asset_webview
 description: 
   A Flutter plug-in providing a native web view that loads Flutter assets. Useful for embdding HTML content in your application, for example to display help content.
 version: 0.0.1
-author: David Green
 homepage: https://github.com/greensopinion/asset_webview
 
 environment:
