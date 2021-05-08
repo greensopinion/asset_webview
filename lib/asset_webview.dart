@@ -28,8 +28,8 @@ class AssetWebview extends StatelessWidget {
     if (Platform.isAndroid) {
       return PlatformViewLink(
           surfaceFactory: (context, controller) {
-            return PlatformViewSurface(
-              controller: controller,
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
               gestureRecognizers: const <
                   Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
