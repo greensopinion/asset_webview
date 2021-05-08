@@ -1,4 +1,4 @@
-package com.example.asset_webview_example
+package com.greensopinion.flutter.asset_webview
 
 import io.flutter.embedding.android.FlutterActivity
 

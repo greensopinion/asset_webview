@@ -28,7 +28,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.asset_webview
+        package: com.greensopinion.flutter.asset_webview
         pluginClass: AssetWebviewPlugin
       ios:
         pluginClass: AssetWebviewPlugin
