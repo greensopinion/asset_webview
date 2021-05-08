@@ -1,17 +1,21 @@
 package com.greensopinion.flutter.asset_webview
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat.startActivity
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
-import android.webkit.WebViewClient
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import java.lang.Exception
 import java.net.URI
 import java.net.URLConnection
+
 
 class AssetWebviewFactory(private val flutterAssets: FlutterPlugin.FlutterAssets) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any): PlatformView {
@@ -59,6 +63,16 @@ private class FlutterWebviewClient(val context: Context) : WebViewClient() {
             }
         }
         return null
+    }
+
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        return when (request.url.scheme) {
+            "https", "http" -> {
+                context.startActivity(Intent(Intent.ACTION_VIEW, request.url))
+                true
+            }
+            else -> false
+        }
     }
 }
 

@@ -1,3 +1,6 @@
+## 0.0.3
+
+Open web URLs in the default platform browser.
 
 ## 0.0.2
 

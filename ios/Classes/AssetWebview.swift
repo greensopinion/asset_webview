@@ -68,4 +68,14 @@ class AssetWebview: NSObject, FlutterPlatformView, WKNavigationDelegate {
             WebViewAppearance.loaded(_view)
         }
     }
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if (navigationAction.navigationType == .linkActivated) {
+            if let url = navigationAction.request.url, url.scheme == "http" || url.scheme == "https" {
+                UIApplication.shared.open(url)
+                decisionHandler(.cancel)
+                return
+            }
+        }
+        decisionHandler(.allow)
+    }
 }
