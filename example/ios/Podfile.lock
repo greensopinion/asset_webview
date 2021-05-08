@@ -1,0 +1,22 @@
+PODS:
+  - asset_webview (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - asset_webview (from `.symlinks/plugins/asset_webview/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  asset_webview:
+    :path: ".symlinks/plugins/asset_webview/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  asset_webview: 6ea3e602c34e111b4d808f8c09b8d31fbe5c27e4
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+
+PODFILE CHECKSUM: a5adfe7971131cf0589107393691ada35be2b45f
+
+COCOAPODS: 1.10.1
