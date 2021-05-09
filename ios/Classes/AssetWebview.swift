@@ -37,13 +37,14 @@ class AssetWebviewFactory: NSObject, FlutterPlatformViewFactory {
 }
 
 class AssetWebview: NSObject, FlutterPlatformView, WKNavigationDelegate {
-    private var _view: WKWebView
+    private let _view: WKWebView
     private var _loaded: Bool = false
+    private let _channel: FlutterMethodChannel
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
         arguments args: Any?,
-        binaryMessenger messenger: FlutterBinaryMessenger?,
+        binaryMessenger messenger: FlutterBinaryMessenger,
         assetHandler: AssetHandler
     ) {
         let configuration = WKWebViewConfiguration()
@@ -51,7 +52,11 @@ class AssetWebview: NSObject, FlutterPlatformView, WKNavigationDelegate {
         _view = WKWebView(frame: frame, configuration: configuration)
         _view.allowsBackForwardNavigationGestures = false
         _view.allowsLinkPreview = false
+        _channel = FlutterMethodChannel(name: "com.greensopinion.flutter/asset_webview_\(viewId)", binaryMessenger: messenger)        
         super.init()
+        _channel.setMethodCallHandler({ call, result in
+            self.callMethod(call, result)
+        })
         _view.navigationDelegate = self
         WebViewAppearance.initial(_view)
         let arguments = args as! Dictionary<String, Any>
@@ -68,14 +73,30 @@ class AssetWebview: NSObject, FlutterPlatformView, WKNavigationDelegate {
             WebViewAppearance.loaded(_view)
         }
     }
+    
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if (navigationAction.navigationType == .linkActivated) {
-            if let url = navigationAction.request.url, url.scheme == "http" || url.scheme == "https" {
-                UIApplication.shared.open(url)
-                decisionHandler(.cancel)
-                return
+            if let url = navigationAction.request.url {
+                if url.scheme == "http" || url.scheme == "https" {
+                    UIApplication.shared.open(url)
+                    decisionHandler(.cancel)
+                    return
+                }
+                if url.scheme != "asset" {
+                    let args = [
+                        "url": url.absoluteString
+                    ]
+                    _channel.invokeMethod("shouldOverrideUrlLoading", arguments: args, result: { response in
+                        let shouldOverride = response as! Bool
+                        decisionHandler(shouldOverride ? .cancel : .allow)
+                    })
+                    return
+                }
             }
         }
         decisionHandler(.allow)
+    }
+    func callMethod(_ call: FlutterMethodCall, _ result: FlutterResult) {
+        result(FlutterMethodNotImplemented)
     }
 }

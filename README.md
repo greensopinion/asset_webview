@@ -47,9 +47,48 @@ Usage involves the following steps:
 
 See [the sample application](example) for a complete application.
 
+### In-App Navigation Links
+
+To link from web content to a named route in the app, do the following:
+
+1. Create a function that can provide a `BuildContext`
+
+    ```dart
+    BuildContext _currentContext() => _navigatorKey.currentContext!;
+    final _navigatorKey = GlobalKey<NavigatorState>();
+    ```
+
+2. Pass a `NavigationAssetWebviewController` to the `AssetWebview`
+
+    ```dart
+    AssetWebview(
+      initialUrl: 'asset://local/help/index.html',
+      controller: NavigationAssetWebviewController(_currentContext)
+    )
+    ```
+
+3. Provide named routes in the application
+
+    ```dart
+    MaterialApp(
+      navigatorKey: _navigatorKey,
+      ...
+      routes: {"about": (context) => AboutPage()},
+    );
+    ```
+
+4. Place navigation links in the html content:
+
+    ```dart
+    <a href="navigation://about">About</a>
+    ```
+
+
+See [the sample application](example) for a complete application.
+
 ### Troubleshooting
 
-My assets aren't showing up (not found)
+**My assets aren't showing up (not found)**
 
 Check the `pubspec.yaml` indentation. `assets` must be indented one level under `flutter`.
 
