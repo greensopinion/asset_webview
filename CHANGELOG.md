@@ -1,10 +1,14 @@
+## 0.0.4
+
+Added in-app navigation capability.
+
 ## 0.0.3
 
-Open web URLs in the default platform browser.
+Changed behaviour of `AssetWebview` to open web URLs in the default platform browser.
 
 ## 0.0.2
 
-Fix crash on drag gesture on Android.
+Fixed crash on drag gesture on Android.
 
 ## 0.0.1
 
