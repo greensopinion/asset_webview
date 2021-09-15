@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 const _ASSET_URL_PREFIX = "asset://local/";
 const _VIEW_TYPE = "com.greensopinion.flutter/asset_webview";
@@ -27,7 +28,7 @@ class AssetWebview extends StatefulWidget {
   }
   @override
   State<StatefulWidget> createState() {
-    return _AssetWebviewState(initialUrl: initialUrl, controller: controller);
+    return _AssetWebviewState(initialUrl: initialUrl, controller: controller, builtInZoomControls: builtInZoomControls);
   }
 }
 
