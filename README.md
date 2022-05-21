@@ -92,6 +92,17 @@ See [the sample application](example) for a complete application.
 
 Check the `pubspec.yaml` indentation. `assets` must be indented one level under `flutter`.
 
+## Maintaining
+
+### Editing Android Plugin Files
+
+Per [Flutter docs](https://docs.flutter.dev/development/packages-and-plugins/developing-packages#step-2b-add-android-platform-code-ktjava) when opening in IntelliJ
+open `example/android/build.gradle`
+
+### Commands
+
+publishing: `flutter pub publish`
+
 ## License
 
 Copyright 2021 David Green

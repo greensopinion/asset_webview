@@ -1,8 +1,8 @@
 package com.greensopinion.flutter.asset_webview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -17,22 +17,22 @@ import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 import java.net.URI
 import java.net.URLConnection
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 class AssetWebviewFactory(
         private val binaryMessenger: BinaryMessenger,
         private val flutterAssets: FlutterPlugin.FlutterAssets
 ) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
-    override fun create(context: Context, viewId: Int, args: Any): PlatformView {
-        return AssetWebview(binaryMessenger, flutterAssets, context, viewId, args as Map<String?, Any?>)
+
+    override fun create(context: Context?, viewId: Int, args: Any?): PlatformView {
+        return AssetWebview(binaryMessenger, flutterAssets, context!!, viewId, args as Map<String?, Any?>)
     }
 }
 
+@SuppressLint("SetJavaScriptEnabled")
 private class AssetWebview(
-        private val binaryMessenger: BinaryMessenger,
-        private val flutterAssets: FlutterPlugin.FlutterAssets,
-        val context: Context,
+        binaryMessenger: BinaryMessenger,
+        flutterAssets: FlutterPlugin.FlutterAssets,
+        context: Context,
         id: Int,
         creationParams: Map<String?, Any?>
 ) : PlatformView {
@@ -44,7 +44,7 @@ private class AssetWebview(
         view.settings.allowFileAccess = false
         view.settings.allowContentAccess = false
         view.setWebViewClient(AssetWebviewClient(methodChannel, context, view))
-        val initialUrl = creationParams["initialUrl"] as String
+        val initialUrl = creationParams["initialUrl"] as String?
                 ?: throw Exception("Must specify initialUrl")
         require(initialUrl.startsWith("asset://local/")) { "Expected initialUrl starting with asset://local/" }
         val path = URI.create(initialUrl).path.trimLeadingSlash()
@@ -103,7 +103,7 @@ private class AssetWebviewClient(
                             }
                         }
 
-                        override fun error(errorCode: String?, errorMessage: String?, errorDetails: Any?) {
+                        override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
                             throw Exception("$errorCode: $errorMessage")
                         }
 

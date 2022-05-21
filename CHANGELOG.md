@@ -1,3 +1,6 @@
+## 1.0.0
+
+* Updated to support Flutter 3
 ## 0.0.5
 
 * Updated Android compile SDK version
