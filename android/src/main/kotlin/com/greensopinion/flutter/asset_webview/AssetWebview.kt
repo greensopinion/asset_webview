@@ -49,6 +49,8 @@ private class AssetWebview(
         require(initialUrl.startsWith("asset://local/")) { "Expected initialUrl starting with asset://local/" }
         val path = URI.create(initialUrl).path.trimLeadingSlash()
         val assetPath = flutterAssets.getAssetFilePathByName(path).trimLeadingSlash()
+        val builtInZoomControls = creationParams["builtInZoomControls"] as Boolean ?: false
+        view.getSettings().setBuiltInZoomControls(builtInZoomControls)
         view.loadUrl("asset://local/$assetPath")
     }
 
