@@ -55,6 +55,7 @@ private class AssetWebview(
         val assetPath = flutterAssets.getAssetFilePathByName(path).trimLeadingSlash()
         val builtInZoomControls = creationParams["builtInZoomControls"] as Boolean ?: false
         view.getSettings().setBuiltInZoomControls(builtInZoomControls)
+        view.getSettings().setDisplayZoomControls(false)
         view.loadUrl("asset://local/$assetPath")
     }
 
