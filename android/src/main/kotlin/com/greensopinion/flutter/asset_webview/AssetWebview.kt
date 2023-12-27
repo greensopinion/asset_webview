@@ -1,8 +1,12 @@
 package com.greensopinion.flutter.asset_webview
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
+import android.net.Uri
+import android.os.Build
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -49,6 +53,9 @@ private class AssetWebview(
         require(initialUrl.startsWith("asset://local/")) { "Expected initialUrl starting with asset://local/" }
         val path = URI.create(initialUrl).path.trimLeadingSlash()
         val assetPath = flutterAssets.getAssetFilePathByName(path).trimLeadingSlash()
+        val builtInZoomControls = creationParams["builtInZoomControls"] as Boolean ?: false
+        view.getSettings().setBuiltInZoomControls(builtInZoomControls)
+        view.getSettings().setDisplayZoomControls(false)
         view.loadUrl("asset://local/$assetPath")
     }
 
@@ -83,23 +90,61 @@ private class AssetWebviewClient(
         return null
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-        val url = request.url
-        return when (url.scheme) {
+    @SuppressWarnings("deprecation")
+    override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
+        val uri: Uri = Uri.parse(url)
+        return when (uri.scheme) {
             "https", "http" -> {
-                context.startActivity(Intent(Intent.ACTION_VIEW, url))
+                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
                 true
             }
             "asset" -> false
             else -> {
                 methodChannel.invokeMethod(
                     "shouldOverrideUrlLoading",
-                    mapOf(Pair("url", url.toString())),
+                    mapOf(Pair("url", uri.toString())),
                     object : MethodChannel.Result {
                         override fun success(result: Any?) {
                             val shouldOverride = result as Boolean
                             if (!shouldOverride) {
-                                view.loadUrl(url.toString())
+                                view.loadUrl(uri.toString())
+                            }
+                        }
+
+                        override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+                            throw Exception("$errorCode: $errorMessage")
+                        }
+
+                        override fun notImplemented() {
+                            throw Exception()
+                        }
+                    }
+                )
+                // can't block here, so we ovreride all requests and then later apply the response
+                // from the controller to the web view
+                true
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        val uri = request.url
+        return when (uri.scheme) {
+            "https", "http" -> {
+                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                true
+            }
+            "asset" -> false
+            else -> {
+                methodChannel.invokeMethod(
+                    "shouldOverrideUrlLoading",
+                    mapOf(Pair("url", uri.toString())),
+                    object : MethodChannel.Result {
+                        override fun success(result: Any?) {
+                            val shouldOverride = result as Boolean
+                            if (!shouldOverride) {
+                                view.loadUrl(uri.toString())
                             }
                         }
 
